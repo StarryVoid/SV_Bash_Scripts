@@ -38,7 +38,7 @@ function check_file_directory() {
     if [ -f "${OUTPUTLOG}" ]; then
       echo "[Warning] The current directory is \"""$(pwd)""\". Please move to another path and delete this log file." > "${OUTPUTLOG}" ; exit 1
     else
-      echo "[Warning] The current directory is \"""$(pwd)""\". For management reasons, the log file path has been moved to \"/var/log/ddns/\". Remember to delete \"""$(pwd)""/ddns_readme.log\" log file" > "$(pwd)"./ddns_readme.log
+      if ! [ -f "$(pwd)/${DOMAINNAME}.log" ]; then echo "[Warning] The current directory is \"""$(pwd)""\". For management reasons, the log file path has been moved to \"/var/log/ddns/\". Remember to delete \"""${OUTPUTLOG}""\" log file" > "$(pwd)"./ddns_readme.log ; fi
       OUTPUTLOG="/var/log/ddns/${DOMAINNAME}.log"
       if ! [ -d "/var/log/ddns/" ]; then mkdir "/var/log/ddns/" && touch "${OUTPUTLOG}" ; fi
       if ! [ -f "${OUTPUTLOG}" ]; then echo "[Error] Could not create log file \"""${OUTPUTLOG}""\"" ; exit 1 ; fi
@@ -49,7 +49,6 @@ function check_file_directory() {
 function check_environment () {
   if ! [ "$(command -v pwd)" ]; then echo "[Error] Command not found \"pwd\"" >> "${OUTPUTLOG}" ; exit 1 ; fi
   if ! [ -x "$(command -v curl)" ]; then echo "[Error] Command not found \"curl\"" >> "${OUTPUTLOG}" ; exit 1 ; fi
-  if ! [ -x "$(command -v wget)" ]; then echo "[Error] Command not found \"wget\"" >> "${OUTPUTLOG}" ; exit 1 ; fi
 }
 
 function check_selectAT () {
@@ -86,11 +85,12 @@ function get_cloudflare_ipaddress_token() {
 }
 
 function get_server_new_ip() {
-    [ -z "${NEWIPADD}" ] && NEWIPADD=$( wget -qO- -t1 -T2 https://ipv4.icanhazip.com )
-    [ -z "${NEWIPADD}" ] && NEWIPADD=$( wget -qO- -t1 -T2 https://api.ipify.org )
-    [ -z "${NEWIPADD}" ] && NEWIPADD=$( wget -qO- -t1 -T2 ipv4.icanhazip.com )
-    [ -z "${NEWIPADD}" ] && NEWIPADD=$( wget -qO- -t1 -T2 api.ipify.org )
-    [ -z "${NEWIPADD}" ] && NEWIPADD=$( wget -qO- -t1 -T2 ipinfo.io/ip )
+    [ -z "${NEWIPADD}" ] && NEWIPADD=$(curl -s --retry 1 --connect-timeout 2 https://ipv4.icanhazip.com/)
+    [ -z "${NEWIPADD}" ] && NEWIPADD=$(curl -s --retry 1 --connect-timeout 2 https://api.ipify.org/)
+    [ -z "${NEWIPADD}" ] && NEWIPADD=$(curl -s --retry 1 --connect-timeout 2 https://ipinfo.io/ip/)
+    [ -z "${NEWIPADD}" ] && NEWIPADD=$(curl -s --retry 1 --connect-timeout 2 http://ipv4.icanhazip.com/)
+    [ -z "${NEWIPADD}" ] && NEWIPADD=$(curl -s --retry 1 --connect-timeout 2 http://api.ipify.org/)
+    [ -z "${NEWIPADD}" ] && NEWIPADD=$(curl -s --retry 1 --connect-timeout 2 http://ipinfo.io/ip/)
     if [[ ! "${NEWIPADD}" ]]; then echo "[Error] Failed to obtain the public address of the current network." >> "${OUTPUTLOG}"; exit 1; fi
 }
 
