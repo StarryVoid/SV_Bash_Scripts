@@ -157,6 +157,7 @@ function main() {
     else
 #    echo "[Info] The ip address is the same as the cloudflare record." >> "${OUTPUTLOG}"
       make_records_file
+      exit 0
     fi
   else 
 #    echo "[Info] There is no need to change ip address." >> "${OUTPUTLOG}"
