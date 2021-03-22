@@ -1,6 +1,5 @@
-# DDNS_Cloudflare_Shell
+# Some Bash scripts
+
+## DDNS_Cloudflare_Shell
 Dynamic Domain Name Server (Cloudflare API)
-
-## Source
-
-https://blog.starryvoid.com/archives/313.html
+```https://blog.starryvoid.com/archives/313.html```
