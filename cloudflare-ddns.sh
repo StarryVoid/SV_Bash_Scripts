@@ -6,7 +6,7 @@ export PATH
 #
 # Author: StarryVoid <stars@starryvoid.com>
 # Intro:  https://blog.starryvoid.com/archives/313.html
-# Build:  2020/12/08 Version 2.3.1
+# Build:  2021/04/08 Version 2.3.1.1
 #
 
 # Select API(1) Or Token(2)
