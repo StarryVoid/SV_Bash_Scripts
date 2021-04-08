@@ -49,10 +49,16 @@ function check_file_directory() {
 function check_environment () {
   if ! [ "$(command -v pwd)" ]; then echo "[Error] Command not found \"pwd\"" >> "${OUTPUTLOG}" ; exit 1 ; fi
   if ! [ -x "$(command -v curl)" ]; then echo "[Error] Command not found \"curl\"" >> "${OUTPUTLOG}" ; exit 1 ; fi
+  if ! [ -x "$(command -v ipcalc)" ]; then echo "[Error] Command not found \"ipcalc\"" >> "${OUTPUTLOG}" ; exit 1 ; fi
 }
 
 function check_selectAT () {
   if [[ ! "${SelectAT}" = 1 && ! "${SelectAT}" = 2 ]]; then echo "[Error] Failed to Select API(1) Or Token(2), Please check the configuration." >> "${OUTPUTLOG}"; exit 1; fi
+}
+
+function check_ipaddress() {
+    CHECKIPADD=$1
+    if ipcalc -cs "${CHECKIPADD}" ; then echo "${CHECKIPADD}" ; fi
 }
 
 function cloudflare_return_log_check() {
@@ -85,12 +91,12 @@ function get_cloudflare_ipaddress_token() {
 }
 
 function get_server_new_ip() {
-    [ -z "${NEWIPADD}" ] && NEWIPADD=$(curl -s --retry 1 --connect-timeout 2 https://ipv4.icanhazip.com/)
-    [ -z "${NEWIPADD}" ] && NEWIPADD=$(curl -s --retry 1 --connect-timeout 2 https://api.ipify.org/)
-    [ -z "${NEWIPADD}" ] && NEWIPADD=$(curl -s --retry 1 --connect-timeout 2 https://ipinfo.io/ip/)
-    [ -z "${NEWIPADD}" ] && NEWIPADD=$(curl -s --retry 1 --connect-timeout 2 http://ipv4.icanhazip.com/)
-    [ -z "${NEWIPADD}" ] && NEWIPADD=$(curl -s --retry 1 --connect-timeout 2 http://api.ipify.org/)
-    [ -z "${NEWIPADD}" ] && NEWIPADD=$(curl -s --retry 1 --connect-timeout 2 http://ipinfo.io/ip/)
+    [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 https://ipv4.icanhazip.com/)" )
+    [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 https://api.ipify.org/)" )
+    [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 https://ipinfo.io/ip/)" )
+    [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 http://ipv4.icanhazip.com/)" )
+    [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 http://api.ipify.org/)" )
+    [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 http://ipinfo.io/ip/)" )
     if [[ ! "${NEWIPADD}" ]]; then echo "[Error] Failed to obtain the public address of the current network." >> "${OUTPUTLOG}"; exit 1; fi
 }
 
@@ -125,7 +131,7 @@ function update_new_ipaddress() {
 }
 
 function make_records_file() {
-  echo "{\"datatime\":""${DATETIME}"":,\"zone_records\":""${Data_zone_records}"",\"dns_records\":""${Data_dns_records}"",\"ip_address\":""${NEWIPADD}""}" > "${OUTPUTINFO}"
+  echo "{\"datatime\":""${DATETIME}"",\"zone_records\":""${Data_zone_records}"",\"dns_records\":""${Data_dns_records}"",\"ip_address\":""${NEWIPADD}""}" > "${OUTPUTINFO}"
   echo "[Info] Successfully generated DDNS information file." >> "${OUTPUTLOG}"
 }
 
