@@ -6,7 +6,7 @@ export PATH
 #
 # Author: StarryVoid <stars@starryvoid.com>
 # Intro:  https://blog.starryvoid.com/archives/313.html
-# Build:  2021/04/08 Version 2.3.2.1
+# Build:  2021/04/15 Version 2.3.2.2
 #
 
 # Select API(1) Or Token(2)
@@ -53,7 +53,6 @@ function make_log() {
 function check_environment () {
   if ! [ "$(command -v pwd)" ]; then make_log Error "Command not found \"pwd\"" ; exit 1 ; fi
   if ! [ -x "$(command -v curl)" ]; then make_log Error "Command not found \"curl\"" ; exit 1 ; fi
-  if ! [ -x "$(command -v ipcalc)" ]; then make_log Error "Command not found \"ipcalc\"" ; exit 1 ; fi
 }
 
 function check_selectAT () {
@@ -61,8 +60,12 @@ function check_selectAT () {
 }
 
 function check_ipaddress() {
-  CHECKIPADD=$1
-  if ipcalc -cs "${CHECKIPADD}" ; then echo "${CHECKIPADD}" ; fi
+  CHECKIPADD=$(echo "$1" | head -n 1)
+  if echo "${CHECKIPADD}" | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$" > /dev/null ; then   
+      echo "${CHECKIPADD}" | awk -F "." '$1<=255&&$2<=255&&$3<=255&&$4<=255{print $1"."$2"."$3"."$4}'
+  else   
+      echo ""   
+  fi
 }
 
 function cloudflare_return_log_check() {
