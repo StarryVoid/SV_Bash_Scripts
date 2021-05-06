@@ -6,7 +6,7 @@ export PATH
 #
 # Author: StarryVoid <stars@starryvoid.com>
 # Intro:  https://blog.starryvoid.com/archives/313.html
-# Build:  2021/04/15 Version 2.3.2.2
+# Build:  2021/05/06 Version 2.3.2.3
 #
 
 # Select API(1) Or Token(2)
@@ -98,10 +98,9 @@ function get_cloudflare_ipaddress_token() {
 }
 
 function get_server_new_ip() {
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 https://ipv4.icanhazip.com/)" )
   [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 https://api.ipify.org/)" )
   [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 https://ipinfo.io/ip/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 http://ipv4.icanhazip.com/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 http://ip-api.com/json/?fields=query | awk -F "\"" '{print $4}' )" )
   [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 http://api.ipify.org/)" )
   [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -s --retry 1 --connect-timeout 1 http://ipinfo.io/ip/)" )
   if [[ ! "${NEWIPADD}" ]]; then make_log Error "Failed to obtain the public address of the current network." ; exit 1; fi
