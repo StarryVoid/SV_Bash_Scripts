@@ -6,7 +6,7 @@ export PATH
 #
 # Author: StarryVoid <stars@starryvoid.com>
 # Intro:  https://blog.starryvoid.com/archives/313.html
-# Build:  2021/05/06 Version 2.3.2.3
+# Build:  2021/08/13 Version 2.3.2.4
 #
 
 # Select API(1) Or Token(2)
@@ -26,7 +26,7 @@ DOMAINTTL="1"
 
 # Output
 OUTPUTLOG="$(pwd)/${DOMAINNAME}.log"
-OUTPUTINFO="/tmp/ddns_${DOMAINNAME}.info"
+OUTPUTINFO="$(pwd)/ddns_${DOMAINNAME}.info"
 
 # Time
 DATETIME=$(date +%Y%m%d_%H%M%S)
@@ -40,8 +40,11 @@ function check_file_directory() {
     else
       if ! [ -f "$(pwd)/ddns_readme.log" ]; then echo "[Warning] The current directory is \"""$(pwd)""\". For management reasons, the log file path has been moved to \"/var/log/ddns/\". Remember to delete the log file similar to \"ddns.example.domain.log\" in the \"/\" directory." > "$(pwd)"./ddns_readme.log ; fi
       OUTPUTLOG="/var/log/ddns/${DOMAINNAME}.log"
+      OUTPUTINFO="/var/lib/ddns/ddns_${DOMAINNAME}.info"
       if ! [ -d "/var/log/ddns/" ]; then mkdir "/var/log/ddns/" && touch "${OUTPUTLOG}" ; fi
+      if ! [ -d "/var/lib/ddns/" ]; then mkdir "/var/lib/ddns/" && touch "${OUTPUTINFO}" ; fi
       if ! [ -f "${OUTPUTLOG}" ]; then echo "[Error] Could not create log file \"""${OUTPUTLOG}""\"" ; exit 1 ; fi
+      if ! [ -f "${OUTPUTINFO}" ]; then echo "[Error] Could not create log file \"""${OUTPUTLOG}""\"" ; exit 1 ; fi
     fi
   fi 
 }
