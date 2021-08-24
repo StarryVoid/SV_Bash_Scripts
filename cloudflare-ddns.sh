@@ -41,9 +41,10 @@ function check_file_directory() {
       if ! [ -f "$(pwd)/ddns_readme.log" ]; then echo "[Warning] The current directory is \"""$(pwd)""\". For management reasons, the log file path has been moved to \"/var/log/ddns/\". Remember to delete the log file similar to \"ddns.example.domain.log\" in the \"/\" directory." > "$(pwd)"./ddns_readme.log ; fi
       OUTPUTLOG="/var/log/ddns/${DOMAINNAME}.log"
       OUTPUTINFO="/var/lib/ddns/ddns_${DOMAINNAME}.info"
-      if ! [ -d "/var/log/ddns/" ]; then mkdir "/var/log/ddns/" && touch "${OUTPUTLOG}" ; fi
-      if ! [ -d "/var/lib/ddns/" ]; then mkdir "/var/lib/ddns/" && touch "${OUTPUTINFO}" ; fi
+      if ! [ -d "/var/log/ddns/" ]; then mkdir "/var/log/ddns/" ; fi
+      touch "${OUTPUTLOG}"
       if ! [ -f "${OUTPUTLOG}" ]; then echo "[Error] Could not create log file \"""${OUTPUTLOG}""\"" ; exit 1 ; fi
+      touch "${OUTPUTINFO}"
       if ! [ -f "${OUTPUTINFO}" ]; then echo "[Error] Could not create log file \"""${OUTPUTLOG}""\"" ; exit 1 ; fi
     fi
   fi 
