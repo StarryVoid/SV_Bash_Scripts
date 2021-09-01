@@ -70,7 +70,9 @@ function check_ipaddress() {
   CHECKIPADD=$(echo "$1" | head -n 1)
   if echo "${CHECKIPADD}" | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$" > /dev/null ; then   
       echo "${CHECKIPADD}" | awk -F "." '$1<=255&&$2<=255&&$3<=255&&$4<=255{print $1"."$2"."$3"."$4}'
-  else   
+  elif echo "${CHECKIPADD}" | grep -E "^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$" > /dev/null ; then
+      echo "${CHECKIPADD}"
+  else
       echo ""   
   fi
 }
