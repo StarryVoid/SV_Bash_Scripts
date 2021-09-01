@@ -28,8 +28,8 @@ DOMAINTTL="1"
 DOMAINIPVERSION="ipv4"
 
 # Output
-OUTPUTLOG="$(pwd)/${DOMAINNAME}.log"
-OUTPUTINFO="$(pwd)/ddns_${DOMAINNAME}.info"
+OUTPUTLOG="$(pwd)/${DOMAINIPVERSION}_${DOMAINNAME}.log"
+OUTPUTINFO="$(pwd)/ddns_${DOMAINIPVERSION}_${DOMAINNAME}.info"
 
 # Time
 DATETIME=$(date +%Y%m%d_%H%M%S)
@@ -42,8 +42,8 @@ function check_file_directory() {
       echo "[Warning] The current directory is \"""$(pwd)""\". Please move to another path and delete this log file." > "${OUTPUTLOG}" ; exit 1
     else
       if ! [ -f "$(pwd)/ddns_readme.log" ]; then echo "[Warning] The current directory is \"""$(pwd)""\". For management reasons, the log file path has been moved to \"/var/log/ddns/\". Remember to delete the log file similar to \"ddns.example.domain.log\" in the \"/\" directory." > "$(pwd)"./ddns_readme.log ; fi
-      OUTPUTLOG="/var/log/ddns/${DOMAINNAME}.log"
-      OUTPUTINFO="/var/lib/ddns/ddns_${DOMAINNAME}.info"
+      OUTPUTLOG="/var/log/ddns/${DOMAINIPVERSION}_${DOMAINNAME}.log"
+      OUTPUTINFO="/var/lib/ddns/ddns_${DOMAINIPVERSION}_${DOMAINNAME}.info"
       if ! [ -d "/var/log/ddns/" ]; then mkdir "/var/log/ddns/" ; fi
       touch "${OUTPUTLOG}"
       if ! [ -f "${OUTPUTLOG}" ]; then echo "[Error] Could not create log file \"""${OUTPUTLOG}""\"" ; exit 1 ; fi
