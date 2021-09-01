@@ -188,8 +188,8 @@ function main() {
   fi
   read_records_file
   if [[ "${NEWIPADD}" != "${Old_domain_ip}" ]]; then
-    if [ "${SelectAT}" = 1 ]; then get_cloudflare_ipaddress_api "${ZONENAME}" "${DOMAINNAME}" ; fi
-    if [ "${SelectAT}" = 2 ]; then get_cloudflare_ipaddress_token "${ZONENAME}" "${DOMAINNAME}" ; fi
+    if [ "${SelectAT}" = 1 ]; then get_cloudflare_ipaddress_api "${ZONENAME}" "${DOMAINNAME}" "${DOMAINDNSTYPE}"; fi
+    if [ "${SelectAT}" = 2 ]; then get_cloudflare_ipaddress_token "${ZONENAME}" "${DOMAINNAME}" "${DOMAINDNSTYPE}"; fi
     if [[ "${NEWIPADD}" != "${Data_domain_ip}" ]]; then
       update_new_ipaddress
       exit 0
