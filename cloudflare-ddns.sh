@@ -83,61 +83,66 @@ function cloudflare_return_log_check() {
 }
 
 function get_cloudflare_ipaddress_api() {
-  [ -z "${Data_zone_records}" ] && LOG_get_zone_records_api=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=$1" -H "X-Auth-Email: ${XAUTHEMAIL}" -H "X-Auth-Key: ${XAUTHKEY}" -H "Content-Type: application/json" --connect-timeout 30 -m 10 )
+  [ -z "${Data_zone_records}" ] && LOG_get_zone_records_api=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=$1" -H "X-Auth-Email: ${XAUTHEMAIL}" -H "X-Auth-Key: ${XAUTHKEY}" -H "Content-Type: application/json" --connect-timeout 5 -m 10 )
   [ -z "${Data_zone_records}" ] && if [ ! "$(cloudflare_return_log_check "${LOG_get_zone_records_api}" "success")" == "true" ]; then make_log Error "Failed to get cloudflare \"$1\" zone_records information" ; exit 1; fi
   [ -z "${Data_zone_records}" ] && Data_zone_records=$(cloudflare_return_log_check "${LOG_get_zone_records_api}" "id")
-  [ -z "${Data_dns_records}" ] && LOG_get_dns_records_api=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${Data_zone_records}/dns_records?type=$3&name=$2" -H "X-Auth-Email: ${XAUTHEMAIL}" -H "X-Auth-Key: ${XAUTHKEY}" -H "Content-Type: application/json" --connect-timeout 30 -m 10 )
+  [ -z "${Data_dns_records}" ] && LOG_get_dns_records_api=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${Data_zone_records}/dns_records?type=$3&name=$2" -H "X-Auth-Email: ${XAUTHEMAIL}" -H "X-Auth-Key: ${XAUTHKEY}" -H "Content-Type: application/json" --connect-timeout 5 -m 10 )
   [ -z "${Data_dns_records}" ] && if [ ! "$(cloudflare_return_log_check "${LOG_get_dns_records_api}" "success")" == "true" ]; then make_log Error "Failed to get cloudflare \"$2\" dns_records information" ; exit 1; fi
   [ -z "${Data_dns_records}" ] && Data_dns_records=$(cloudflare_return_log_check "${LOG_get_dns_records_api}" "id")
-  LOG_get_domain_ip_api=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${Data_zone_records}/dns_records/${Data_dns_records}" -H "X-Auth-Email: ${XAUTHEMAIL}" -H "X-Auth-Key: ${XAUTHKEY}" -H "Content-Type: application/json" --connect-timeout 30 -m 10 )
+  LOG_get_domain_ip_api=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${Data_zone_records}/dns_records/${Data_dns_records}" -H "X-Auth-Email: ${XAUTHEMAIL}" -H "X-Auth-Key: ${XAUTHKEY}" -H "Content-Type: application/json" --connect-timeout 5 -m 10 )
   if [ ! "$(cloudflare_return_log_check "${LOG_get_domain_ip_api}" "success")" == "true" ]; then make_log Error "Failed to get cloudflare \"$2\" ip_address information" ; exit 1; fi
   Data_domain_ip=$(cloudflare_return_log_check "${LOG_get_domain_ip_api}" content)
 }
 
 function get_cloudflare_ipaddress_token() {
-  [ -z "${Data_zone_records}" ] && LOG_get_zone_records_token=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=$1" -H "Authorization: Bearer ${AuthorizationToken}" -H "Content-Type: application/json" --connect-timeout 30 -m 10 )
+  [ -z "${Data_zone_records}" ] && LOG_get_zone_records_token=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=$1" -H "Authorization: Bearer ${AuthorizationToken}" -H "Content-Type: application/json" --connect-timeout 5 -m 10 )
   [ -z "${Data_zone_records}" ] && if [ ! "$(cloudflare_return_log_check "${LOG_get_zone_records_token}" "success")" == "true" ]; then make_log Error "Failed to get cloudflare \"$1\" zone_records information" ; exit 1; fi
   [ -z "${Data_zone_records}" ] && Data_zone_records=$(cloudflare_return_log_check "${LOG_get_zone_records_token}" "id")
-  [ -z "${Data_dns_records}" ] && LOG_get_dns_records_token=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${Data_zone_records}/dns_records?type=$3&name=$2" -H "Authorization: Bearer ${AuthorizationToken}" -H "Content-Type: application/json" --connect-timeout 30 -m 10 )
+  [ -z "${Data_dns_records}" ] && LOG_get_dns_records_token=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${Data_zone_records}/dns_records?type=$3&name=$2" -H "Authorization: Bearer ${AuthorizationToken}" -H "Content-Type: application/json" --connect-timeout 5 -m 10 )
   [ -z "${Data_dns_records}" ] && if [ ! "$(cloudflare_return_log_check "${LOG_get_dns_records_token}" "success")" == "true" ]; then make_log Error "Failed to get cloudflare \"$2\" dns_records information" ; exit 1; fi
   [ -z "${Data_dns_records}" ] && Data_dns_records=$(cloudflare_return_log_check "${LOG_get_dns_records_token}" "id")
-  LOG_get_domain_ip_token=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${Data_zone_records}/dns_records/${Data_dns_records}" -H "Authorization: Bearer ${AuthorizationToken}" -H "Content-Type: application/json" --connect-timeout 30 -m 10 )
+  LOG_get_domain_ip_token=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${Data_zone_records}/dns_records/${Data_dns_records}" -H "Authorization: Bearer ${AuthorizationToken}" -H "Content-Type: application/json" --connect-timeout 5 -m 10 )
   if [ ! "$(cloudflare_return_log_check "${LOG_get_domain_ip_token}" "success")" == "true" ]; then make_log Error "Failed to get cloudflare \"$2\" ip_address information" ; exit 1; fi
   Data_domain_ip=$(cloudflare_return_log_check "${LOG_get_domain_ip_token}" content)
 }
 
 function get_server_new_ipv4() {
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 https://api.ipify.org/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 https://ipinfo.io/ip/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 https://v6r.ipip.net/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 https://ipv4.icanhazip.com/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 http://api.ipify.org/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 http://ipinfo.io/ip/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 http://v6r.ipip.net/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 http://ipv4.icanhazip.com/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 0 --connect-timeout 10 http://ip-api.com/line/?fields=query)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 -m 3 https://api.ipify.org/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 -m 3 https://ipinfo.io/ip/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 -m 3 https://v6r.ipip.net/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 -m 3 https://icanhazip.com/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 -m 3 https://wtfismyip.com/text/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 -m 3 http://api.ipify.org/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 -m 3 http://ipinfo.io/ip/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 -m 3 http://v6r.ipip.net/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 -m 3 http://icanhazip.com/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 -m 3 http://wtfismyip.com/text/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 -m 3 http://checkip.amazonaws.com/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -4 -s --retry 1 --connect-timeout 1 -m 3 http://ip-api.com/line/?fields=query)" )
   if [[ ! "${NEWIPADD}" ]]; then make_log Error "Failed to obtain the ipv4 public address of the current network." ; exit 1; fi
 }
 
 function get_server_new_ipv6() {
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 https://api64.ipify.org/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 https://v6.ipinfo.io/ip/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 https://v6r.ipip.net/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 https://ipv6.icanhazip.com/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 http://v6.ipinfo.io/ip/)" )
-  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 http://v6r.ipip.net/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 -m 3 https://api64.ipify.org/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 -m 3 https://v6.ipinfo.io/ip/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 -m 3 https://v6r.ipip.net/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 -m 3 https://wtfismyip.com/text/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 -m 3 https://icanhazip.com/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 -m 3 http://v6.ipinfo.io/ip/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 -m 3 http://v6r.ipip.net/)" )
+  [ -z "${NEWIPADD}" ] && NEWIPADD=$( check_ipaddress "$(curl -6 -s --retry 1 --connect-timeout 1 -m 3 http://wtfismyip.com/text/)" )
   if [[ ! "${NEWIPADD}" ]]; then make_log Error "Failed to obtain the ipv6 public address of the current network." ; exit 1; fi
 }
 
 function update_new_ipaddress_api() {
   make_log Info "IP address will been modified from \"""${Data_domain_ip}""\" to \"""${NEWIPADD}""\"."
-  LOG_update_new_ipaddress_api=$(curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${Data_zone_records}/dns_records/${Data_dns_records}" -H "X-Auth-Email: ${XAUTHEMAIL}" -H "X-Auth-Key: ${XAUTHKEY}" -H "Content-Type: application/json"  --data "{\"type\":\"""$4""\",\"name\":\"""$1""\",\"content\":\"""$2""\",\"ttl\":""$3"",\"proxied\":false}" --connect-timeout 30 -m 10 )
+  LOG_update_new_ipaddress_api=$(curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${Data_zone_records}/dns_records/${Data_dns_records}" -H "X-Auth-Email: ${XAUTHEMAIL}" -H "X-Auth-Key: ${XAUTHKEY}" -H "Content-Type: application/json"  --data "{\"type\":\"""$4""\",\"name\":\"""$1""\",\"content\":\"""$2""\",\"ttl\":""$3"",\"proxied\":false}" --connect-timeout 5 -m 10 )
   if [ ! "$(cloudflare_return_log_check "${LOG_update_new_ipaddress_api}" "success")" == "true" ]; then make_log Error "Failed to update cloudflare address." ; exit 1; fi
 }
 
 function update_new_ipaddress_token() {
   make_log Info "IP address will been modified from \"""${Data_domain_ip}""\" to \"""${NEWIPADD}""\"."
-  LOG_update_new_ipaddress_token=$(curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${Data_zone_records}/dns_records/${Data_dns_records}" -H "Authorization: Bearer ${AuthorizationToken}" -H "Content-Type: application/json"  --data "{\"type\":\"""$4""\",\"name\":\"""$1""\",\"content\":\"""$2""\",\"ttl\":""$3"",\"proxied\":false}" --connect-timeout 30 -m 10 )
+  LOG_update_new_ipaddress_token=$(curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${Data_zone_records}/dns_records/${Data_dns_records}" -H "Authorization: Bearer ${AuthorizationToken}" -H "Content-Type: application/json"  --data "{\"type\":\"""$4""\",\"name\":\"""$1""\",\"content\":\"""$2""\",\"ttl\":""$3"",\"proxied\":false}" --connect-timeout 5 -m 10 )
   if [ ! "$(cloudflare_return_log_check "${LOG_update_new_ipaddress_token}" "success")" == "true" ]; then make_log Error "Failed to update cloudflare address." ; exit 1; fi
 }
 
