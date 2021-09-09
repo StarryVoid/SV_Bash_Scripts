@@ -78,7 +78,7 @@ function check_ipaddress() {
 }
 
 function cloudflare_return_log_check() {
-  cloudflare_return_log_check_status=$(echo "$1" | awk BEGIN"{RS=EOF}"'{gsub(/,/,"\n");print}' | sed 's/{/\n{\n/g' | sed 's/}/\n}\n/g' | sed 's/ //g' | grep -v "^$" | grep "$2" | head -1 | awk -F ":" '{print $2}' | sed 's/\"//g' )
+  cloudflare_return_log_check_status=$(echo "$1" | awk BEGIN"{RS=EOF}"'{gsub(/,/,"\n");print}' | sed 's/{/\n{\n/g' | sed 's/}/\n}\n/g' | sed 's/ //g' | grep -v "^$" | grep "$2" | head -1 | sed 's/:/\n/' | grep -Ev "$2|^$|^:$" | sed 's/\"//g' )
   echo "${cloudflare_return_log_check_status}" 
 }
 
