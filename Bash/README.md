@@ -7,7 +7,3 @@ Dynamic Domain Name Server (Cloudflare API)
 ## domain-resolution-check.sh
 Domain Resolution Check Shell
 ```https://blog.starryvoid.com/archives/434.html```
-
-## NginxAccess_AutoConfig
-Dynamic Domain-IPAddress Make Nginx Accesslist Config (White List) 
-```https://blog.starryvoid.com/archives/585.html```
