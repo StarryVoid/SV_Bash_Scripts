@@ -1,0 +1,12 @@
+:local WGPS1OLD [interface/wireguard/get WG-S1 listen-port];
+:local WGPS2OLD [interface/wireguard/get WG-S2 listen-port];
+:local WGPS1NEW [:rndnum from=12101 to=12199];
+:local WGPS2NEW [:rndnum from=12201 to=12299];
+
+interface/wireguard/set WG-S1 disabled=yes;
+interface/wireguard/set WG-S2 disabled=yes;
+interface/wireguard/set WG-S1 listen-port=$WGPS1NEW;
+interface/wireguard/set WG-S2 listen-port=$WGPS2NEW;
+ip/firewall/filter/set [find comment="WireGuard-Peer"] dst-port="$WGPS1NEW,$WGPS2NEW";
+interface/wireguard/set WG-S1 disabled=no;
+interface/wireguard/set WG-S2 disabled=no;
