@@ -1,1 +1,3 @@
+#Policy:test
+
 /tool/wol mac="AA:BB:CC:DD:EE:00" interface=ether1;
