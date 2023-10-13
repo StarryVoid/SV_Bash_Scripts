@@ -1,3 +1,5 @@
+#Policy:read/write
+
 :local WGPS1OLD [interface/wireguard/get WG-S1 listen-port];
 :local WGPS2OLD [interface/wireguard/get WG-S2 listen-port];
 :local WGPS1NEW [:rndnum from=12101 to=12199];
